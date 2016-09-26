@@ -272,14 +272,14 @@ Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 			console.log '[restapi] bulk/register -> '.red, "User does not have 'bulk-register-user' permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
-			
+
 # delete user
 Api.addRoute 'delete/user', authRequired: true,
 	post: ->
 		if RocketChat.authz.hasPermission(@userId, 'delete-user')
 			try
-				Meteor.call 'deleteUser', @bodyParams['target_user_id']
-				console.log @bodyParams['target_user_id']
+				Meteor.runAsUser @userId, () =>
+					Meteor.call 'deleteUser', @bodyParams['target_user_id']
 				status: 'success'
 			catch e
 				console.log(e)
