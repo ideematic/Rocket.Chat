@@ -240,3 +240,52 @@ Api.addRoute 'bulk/createRoom', authRequired: true,
 				console.log '[restapi] bulk/createRoom -> '.red, "User does not have 'bulk-create-c' permission"
 				statusCode: 403
 				body: status: 'error', message: 'You do not have permission to do this'
+
+# add user in a room
+Api.addRoute 'rooms/:id/add_user', authRequired: true,
+	post: ->
+		if RocketChat.authz.hasPermission(@userId, 'bulk-register-user') && RocketChat.authz.hasPermission(@userId, 'bulk-create-c')
+			try
+				Meteor.runAsUser @bodyParams['target_user_id'], () =>
+					Meteor.call('joinRoom', @urlParams.id)
+				status: 'success'
+			catch e
+				statusCode: 400    # bad request or other errors
+				body: status: 'fail', message: e.name + ' :: ' + e.message
+		else
+			console.log '[restapi] bulk/register -> '.red, "User does not have 'bulk-register-user' permission"
+			statusCode: 403
+			body: status: 'error', message: 'You do not have permission to do this'
+
+# remove user from a room
+Api.addRoute 'rooms/:id/remove_user', authRequired: true,
+	post: ->
+		if RocketChat.authz.hasPermission(@userId, 'bulk-register-user') && RocketChat.authz.hasPermission(@userId, 'bulk-create-c')
+			try
+				Meteor.runAsUser @bodyParams['target_user_id'], () =>
+					Meteor.call('leaveRoom', @urlParams.id)
+				status: 'success'
+			catch e
+				statusCode: 400    # bad request or other errors
+				body: status: 'fail', message: e.name + ' :: ' + e.message
+		else
+			console.log '[restapi] bulk/register -> '.red, "User does not have 'bulk-register-user' permission"
+			statusCode: 403
+			body: status: 'error', message: 'You do not have permission to do this'
+			
+# delete user
+Api.addRoute 'delete/user', authRequired: true,
+	post: ->
+		if RocketChat.authz.hasPermission(@userId, 'delete-user')
+			try
+				Meteor.call 'deleteUser', @bodyParams['target_user_id']
+				console.log @bodyParams['target_user_id']
+				status: 'success'
+			catch e
+				console.log(e)
+				statusCode: 400    # bad request or other errors
+				body: status: 'fail', message: e.name + ' :: ' + e.message
+		else
+			console.log '[restapi] delete/user -> '.red, "User does not have 'delete-user' permission"
+			statusCode: 403
+			body: status: 'error', message: 'You do not have permission to do this'
