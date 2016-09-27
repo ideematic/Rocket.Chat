@@ -253,7 +253,7 @@ Api.addRoute 'rooms/:id/add_user', authRequired: true,
 				statusCode: 400    # bad request or other errors
 				body: status: 'fail', message: e.name + ' :: ' + e.message
 		else
-			console.log '[restapi] bulk/register -> '.red, "User does not have 'bulk-register-user' permission"
+			console.log '[restapi] rooms/:id/add_user -> '.red, "User does not have 'bulk-register-user' permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
 
@@ -269,7 +269,7 @@ Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 				statusCode: 400    # bad request or other errors
 				body: status: 'fail', message: e.name + ' :: ' + e.message
 		else
-			console.log '[restapi] bulk/register -> '.red, "User does not have 'bulk-register-user' permission"
+			console.log '[restapi] rooms/:id/remove_user -> '.red, "User does not have 'bulk-register-user' permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
 
