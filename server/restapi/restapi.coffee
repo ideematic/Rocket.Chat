@@ -260,7 +260,7 @@ Api.addRoute 'rooms/:id/add_user', authRequired: true,
 # remove user from a room
 Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 	post: ->
-		if RocketChat.authz.hasPermission(@userId, 'bulk-register-user') && RocketChat.authz.hasPermission(@userId, 'bulk-create-c')
+		if RocketChat.authz.hasPermission(@userId, 'remove-user')
 			try
 				Meteor.runAsUser @bodyParams['target_user_id'], () =>
 					Meteor.call('leaveRoom', @urlParams.id)
@@ -269,7 +269,7 @@ Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 				statusCode: 400    # bad request or other errors
 				body: status: 'fail', message: e.name + ' :: ' + e.message
 		else
-			console.log '[restapi] rooms/:id/remove_user -> '.red, "User does not have 'bulk-register-user' permission"
+			console.log '[restapi] rooms/:id/remove_user -> '.red, "User does not have 'remove-user' permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
 
@@ -287,5 +287,22 @@ Api.addRoute 'delete/user', authRequired: true,
 				body: status: 'fail', message: e.name + ' :: ' + e.message
 		else
 			console.log '[restapi] delete/user -> '.red, "User does not have 'delete-user' permission"
+			statusCode: 403
+			body: status: 'error', message: 'You do not have permission to do this'
+
+#delete channel
+Api.addRoute 'rooms/:id/erase_room', authRequired: true,
+	post: ->
+		if RocketChat.authz.hasPermission(@userId, 'delete-c') && RocketChat.authz.hasPermission(@userId, 'delete-d') && RocketChat.authz.hasPermission(@userId, 'delete-p')
+			try
+				Meteor.runAsUser @userId, () =>
+					Meteor.call('eraseRoom', @urlParams.id)
+				status: 'success'
+			catch e
+				console.log(e)
+				statusCode: 400    # bad request or other errors
+				body: status: 'fail', message: e.name + ' :: ' + e.message
+		else
+			console.log '[restapi] rooms/:id/erase_room -> '.red, "User does not have permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
