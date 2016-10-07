@@ -4,7 +4,7 @@ Meteor.methods({
 		check (rid, String);
 
 		if (RocketChat.authz.hasRole(this.userId, 'admin') === true) {
-			var now, room, users;
+			var now, room;
 			room = RocketChat.models.Rooms.findOneById(rid);
 			if (room == null) {
 				throw new Meteor.Error('error-invalid-room', 'Invalid room', {
@@ -30,7 +30,6 @@ Meteor.methods({
 			});
 			Meteor.defer(function() {});
 			return RocketChat.callbacks.run('afterJoinRoom', user, room);
-			return true;
 		} else {
 			throw (new Meteor.Error(403, 'Access to Method Forbidden', {
 				method: 'addOneUserToGroup'
