@@ -232,7 +232,7 @@ RocketChat.API.v1.addRoute 'users.delete', authRequired: true,
 		catch e
 			return RocketChat.API.v1.failure e.name + ': ' + e.message
 
-		return RocketChat.API.v1.success
+		return RocketChat.API.v1.success()
 
 # Create Private Group
 RocketChat.API.v1.addRoute 'groups.create', authRequired: true,
@@ -256,4 +256,3 @@ RocketChat.API.v1.addRoute 'groups.create', authRequired: true,
 
 		return RocketChat.API.v1.success
 			group: RocketChat.models.Rooms.findOne({_id: id.rid})
-

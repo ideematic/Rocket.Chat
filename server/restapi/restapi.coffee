@@ -273,23 +273,6 @@ Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
 
-# delete user
-Api.addRoute 'delete/user', authRequired: true,
-	post: ->
-		if RocketChat.authz.hasPermission(@userId, 'delete-user')
-			try
-				Meteor.runAsUser @userId, () =>
-					Meteor.call 'deleteUser', @bodyParams['target_user_id']
-				status: 'success'
-			catch e
-				console.log(e)
-				statusCode: 400    # bad request or other errors
-				body: status: 'fail', message: e.name + ' :: ' + e.message
-		else
-			console.log '[restapi] delete/user -> '.red, "User does not have 'delete-user' permission"
-			statusCode: 403
-			body: status: 'error', message: 'You do not have permission to do this'
-
 #delete channel
 Api.addRoute 'rooms/:id/erase_room', authRequired: true,
 	post: ->
@@ -306,3 +289,15 @@ Api.addRoute 'rooms/:id/erase_room', authRequired: true,
 			console.log '[restapi] rooms/:id/erase_room -> '.red, "User does not have permission"
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
+
+Api.addRoute 'groups/:id/add_user', authRequired: true,
+	post: ->
+		try
+			user = RocketChat.models.Users.findOneById(@bodyParams['target_user_id'])
+			Meteor.runAsUser @userId, () =>
+				Meteor.call('addOneUserToGroup', @urlParams.id, user)
+			status: 'success'
+		catch e
+			console.log(e)
+			statusCode: 400    # bad request or other errors
+			body: status: 'fail', message: e.name + ' :: ' + e.message
