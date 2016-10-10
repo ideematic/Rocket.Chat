@@ -241,22 +241,6 @@ Api.addRoute 'bulk/createRoom', authRequired: true,
 				statusCode: 403
 				body: status: 'error', message: 'You do not have permission to do this'
 
-# add user in a room
-Api.addRoute 'rooms/:id/add_user', authRequired: true,
-	post: ->
-		if RocketChat.authz.hasPermission(@userId, 'bulk-register-user') && RocketChat.authz.hasPermission(@userId, 'bulk-create-c')
-			try
-				Meteor.runAsUser @bodyParams['target_user_id'], () =>
-					Meteor.call('joinRoom', @urlParams.id)
-				status: 'success'
-			catch e
-				statusCode: 400    # bad request or other errors
-				body: status: 'fail', message: e.name + ' :: ' + e.message
-		else
-			console.log '[restapi] rooms/:id/add_user -> '.red, "User does not have 'bulk-register-user' permission"
-			statusCode: 403
-			body: status: 'error', message: 'You do not have permission to do this'
-
 # remove user from a room
 Api.addRoute 'rooms/:id/remove_user', authRequired: true,
 	post: ->
@@ -290,6 +274,7 @@ Api.addRoute 'rooms/:id/erase_room', authRequired: true,
 			statusCode: 403
 			body: status: 'error', message: 'You do not have permission to do this'
 
+#add user in room or group
 Api.addRoute 'groups/:id/add_user', authRequired: true,
 	post: ->
 		try
