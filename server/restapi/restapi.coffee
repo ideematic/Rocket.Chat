@@ -283,9 +283,23 @@ Api.addRoute 'groups/:id/add_user', authRequired: true,
 				Meteor.call('addOneUserToGroup', @urlParams.id, user)
 			status: 'success'
 		catch e
-			console.log(e)
 			statusCode: 400    # bad request or other errors
 			body: status: 'fail', message: e.name + ' :: ' + e.message
+
+#set active status
+Api.addRoute 'users/:id/set_active_status', authRequired:true,
+	post: ->
+		try
+			Meteor.runAsUser this.userId, () =>
+				if @bodyParams['active'] == 'true'
+					Meteor.call 'setUserActiveStatus', @urlParams.id, true
+				else if @bodyParams['active'] == 'false'
+					Meteor.call 'setUserActiveStatus', @urlParams.id, false
+			status: 'success'
+		catch e
+			statusCode: 400    # bad request or other errors
+			body: status: 'fail', message: e.name + ' :: ' + e.message
+
 
 # archive a room by it's ID
 Api.addRoute 'room/:id/archive', authRequired: true,
