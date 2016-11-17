@@ -1,7 +1,7 @@
 # config valid only for current version of Capistrano
 lock '3.6.1'
 
-set :application, 'rocket_ideas_lab'
+set :application, 'team_ideematic_com'
 
 set :stages, %w(recipe production)
 set :default_stage, "recipe"
@@ -19,7 +19,7 @@ set :pm2_config, 'pm2.json' # PM2 config path by default
 set :keep_releases, 5
 
 set :nvm_type, :user # or :system, depends on your nvm setup
-set :nvm_node, 'v7.0.0'
+set :nvm_node, 'v4.6.2'
 set :nvm_map_bins, %w{node npm pm2}
 set :linked_dirs, fetch(:linked_dirs, []).push('log')
 
@@ -64,8 +64,8 @@ namespace :deploy do
     # This will create a project tarball from HEAD, stashed and not committed changes wont be released.
 
     on roles(:all) do
-      upload! tarball_path, fetch(:project_tarball_path_remote)
-      #execute :wget, fetch(:project_tarball_compiled_rocket_url), '-O', fetch(:project_tarball_path_remote)
+      #upload! tarball_path, fetch(:project_tarball_path_remote)
+      execute :wget, fetch(:project_tarball_compiled_rocket_url), '-O', fetch(:project_tarball_path_remote)
     end
   end
 end

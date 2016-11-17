@@ -1,8 +1,8 @@
-server '195.154.133.239', user: 'rails', roles: %w{app web db}, primary: true
+server '62.210.93.225', user: 'rocketchat', roles: %w{app web db}, primary: true
 
 set :stage, 'production'
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, "/home/rails/www/#{fetch(:application)}_#{fetch(:stage)}"
+set :deploy_to, "/home/rocketchat/www/#{fetch(:application)}_#{fetch(:stage)}"
 set :branch, 'production'
 set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
